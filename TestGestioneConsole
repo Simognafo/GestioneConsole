@@ -1,0 +1,26 @@
+public class Main {
+  
+  public static void main(String[] args) {
+
+    GestioneConsole console = new GestioneConsole();
+
+    
+    // Test per dammiIntero():
+    /*console.dammiIntero("Inserisci un numero intero: ", "Inserimento non valido. Inserisci un numero intero:", "Hai esaurito il numero di tentativi", 3, 18, 120); */
+
+    // Test per dammiEmail():
+    /*console.dammiEmail("Inserisci il tuo indirizzo email", "Inserimento non valido. Inserisci il tuo indirizzo email", "Hai esaurito il numero di tentativi disponibili", 4); */
+
+    // Test per dammiStringa():
+    /*console.dammiStringa("Inserisci una stringa: ", "Inserimento non valido. Inserisci una stringa:", "Hai esaurito il numero di tentativi", 3); */
+
+    // Test per dammiData():
+    console.dammiData("Inserisci una data nel formato gg/mm/aaaa", "Inserimento non valido. Inserisci una data nel formato gg/mm/aaaa:", "Hai esaurito il numero di tentativi", 3, "01/01/1900", "12/12/2030");
+
+    // Test per dammiCf():
+    /*console.dammiCf("Inserisci il tuo codice fiscale", "Inserimento non valido. Inserisci il tuo codice fiscale:", "Hai esaurito il numero di tentativi", 4); */   
+    
+  }
+
+  
+}

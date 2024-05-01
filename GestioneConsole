@@ -1,0 +1,410 @@
+import java.util.Scanner;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
+
+
+public class GestioneConsole {
+  
+  // Dichiaro lo scanner:
+  private Scanner scanner = new Scanner(System.in);
+
+  // costruttore
+  public GestioneConsole() {
+  }
+  
+  // metodo per validare intero senza range min-max
+  public int[] dammiIntero(String msg, String retryMsg, String errorMsg, int nTentativi) {
+    int [] risultato = new int[2]; 
+    int contatore = 1;
+    String input;
+    int numero;
+    boolean valido = false; // in realtà serve solo a me per capire, ma potrei toglierla
+    System.out.println(msg);
+    input = scanner.nextLine().trim();
+    
+    while (contatore <= nTentativi) {
+      if (input != null && input.matches("[0-9]+")) {
+        numero = Integer.parseInt(input);
+        valido = true;
+        risultato[0] = 1;
+        risultato[1] = numero;
+        System.out.println("Inserimento valido");
+        //scanner.nextLine(); // per risolvere il problema della riga mangiata
+        return risultato;
+              
+      } else {
+          if (contatore < nTentativi) {
+            System.out.println(retryMsg);
+            input = scanner.nextLine();
+            contatore++;
+          } else {
+            System.out.println(errorMsg);
+            valido = false;
+            risultato[0] = 0;
+            risultato[1] = 0;
+            return risultato;
+          }
+      }
+    }
+    scanner.close();
+    return risultato;
+  }
+  // metodo per validare intero con range min-max
+  public int[] dammiIntero(String msg, String retryMsg, String errorMsg, int nTentativi, int min, int max) {
+      int[] risultato = new int[2];
+      int contatore = 1;
+      String input;
+      boolean valido = false; // non servirebbe, ma aiuta me quindi lo metto
+      System.out.println(msg);
+
+      while (contatore <= nTentativi) {
+          input = scanner.nextLine().trim();
+
+          if (input != null && input.matches("[0-9]+")) {
+              int numero = Integer.parseInt(input);
+              if (numero >= min && numero <= max) {                  
+                valido = true;
+                System.out.println("Inserimento valido");
+                risultato[0] = 1;
+                risultato[1] = numero;
+              return risultato;
+              } else {
+                  if (contatore < nTentativi) {
+                    System.out.println(retryMsg);
+                    contatore++;
+                  } else {
+                    System.out.println(errorMsg);
+                    valido = false;
+                    risultato[0] = 0;
+                    risultato[1] = 0;
+                    return risultato;
+                  }
+              }
+          } else {
+              if (contatore < nTentativi) {
+                  System.out.println(retryMsg);
+                  contatore++;
+              } else {
+                  System.out.println(errorMsg);
+                  valido = false;
+                  risultato[0] = 0;
+                  risultato[1] = 0;
+                  return risultato;
+              }
+          }
+      }
+      scanner.close();
+      return risultato;
+  }
+
+
+  //metodo per validare una stringa:
+  public String[] dammiStringa(String msg, String retryMsg, String errorMsg, int nTentativi) {
+    String[] risultato = new String[2];
+    boolean valido = false; // non servirebbe, ma mi aiuta
+    int contatore = 1;
+    String input;
+    System.out.println(msg);
+
+    while (contatore <= nTentativi) {
+      input = scanner.nextLine().trim();
+      if (!input.isEmpty()) {
+        valido = true;
+        System.out.println("Inserimento valido. Hai inserito: " + input);
+        risultato[0] = "true";
+        risultato[1] = input;
+        return risultato;
+      } else {
+        if (contatore < nTentativi) {
+          System.out.println(retryMsg);
+          contatore ++;
+        } else {
+          System.out.println(errorMsg);
+          valido = false;
+          risultato[0] = "false";
+          risultato[1] = "null";
+          return risultato;
+        }
+      }
+    }
+    scanner.close();
+    return risultato;
+  }
+
+  // metodo per validare data, senza un range di validità:
+  public String[] dammiData(String msg, String retryMsg, String errorMsg, int nTentativi) {
+    String[] risultato = new String[2];
+    boolean valido = false; // non servirebbe, ma mi aiuta
+    int contatore = 1;
+    String input;
+    System.out.println(msg);
+
+    while (contatore <= nTentativi) {
+      input = scanner.nextLine().trim();
+      if (input.matches("\\d{2}/\\d{2}/\\d{4}")) {
+        String[] dataSplitted = input.split("/");
+        int giorno = Integer.parseInt(dataSplitted[0]);
+        int mese = Integer.parseInt(dataSplitted[1]);
+        int anno = Integer.parseInt(dataSplitted[2]);
+
+        if ((mese >= 1 && mese <= 12) && (giorno > 0 && giorno <= giorniMese(mese, anno))) {
+          valido = true; // non servirebbe, ma mi aiuta
+          System.out.println("Inserimento valido");
+          risultato[0] = "true";
+          risultato[1] = input;
+          return risultato;
+        } else {
+          if (contatore < nTentativi) {
+            System.out.println(retryMsg);
+            contatore++;
+          } else {
+            System.out.println(errorMsg);
+            valido = false;
+            risultato[0] = "false";
+            risultato[1] = "null";
+            return risultato;
+          }
+        }
+        
+      } else {
+        if (contatore < nTentativi) {
+          System.out.println(retryMsg);
+          contatore++;
+        } else {
+          System.out.println(errorMsg);
+          valido = false; // non servirebbe, ma mi aiuta
+          risultato[0] = "false";
+          risultato[1] = null;
+          return risultato;     
+        }
+      }
+    }
+    scanner.close();
+    return risultato;
+  }
+
+  private int giorniMese(int mese, int anno) {
+    switch (mese) {
+      case 1: // Gennaio
+      case 3: // Marzo
+      case 5: // Maggio
+      case 7: // Luglio
+      case 8: // Agosto
+      case 10: // Ottobre
+      case 12: // Dicembre
+      return 31;
+        
+      case 4: // Aprile
+      case 6: // Giugno
+      case 9: // Settembre
+      case 11: // Novembre
+      return 30;
+      case 2: // Febbraio
+        if ((anno%4==0 && anno%100!=0) || anno%400==0) {
+          return 29;
+        } else {
+          return 28;
+        }
+      default:
+        return 0;
+    }                
+            
+  }
+
+  // metodo per validare data, con un range di validità:
+  public String[] dammiData(String msg, String retryMsg, String errorMsg, int nTentativi, String dataMin, String dataMax) {
+    String[] risultato = new String[2];
+    boolean valido = false;
+    int contatore = 1;
+    System.out.println(msg);
+
+    while (contatore <= nTentativi) {
+      String input = scanner.nextLine().trim();
+
+      if (input.matches("\\d{2}/\\d{2}/\\d{4}")) {
+        String[] dataSplitted = input.split("/");
+        int giorno = Integer.parseInt(dataSplitted[0]);
+        int mese = Integer.parseInt(dataSplitted[1]);
+        int anno = Integer.parseInt(dataSplitted[2]);
+
+        if ((mese >= 1 && mese <= 12) && (giorno > 0 && giorno <= giorniMese(mese, anno))) {
+          SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                    
+          try {
+            Date data = dateFormat.parse(input);
+            Date dataMinima = dateFormat.parse(dataMin);
+            Date dataMassima = dateFormat.parse(dataMax);
+            
+            if (data.after(dataMinima) && data.before(dataMassima)) {
+              valido = true;
+              System.out.println("Inserimento valido");
+              risultato[0] = "true";
+              risultato[1] = input;
+              return risultato;
+            } else {
+              if (contatore < nTentativi) {
+              System.out.println(retryMsg);
+              contatore++;
+              } else {
+                System.out.println(errorMsg);
+                valido = false; // non servirebbe, ma mi aiuta
+                risultato[0] = "false";
+                risultato[1] = null;
+                return risultato;
+              }
+            } 
+          } catch (ParseException e) {
+            System.out.println("Errore durante il parsing della data: " + e.getMessage());
+            return risultato;            
+          }
+        } else {
+            if (contatore < nTentativi) {
+              System.out.println(retryMsg);
+              contatore++;
+            } else {
+              System.out.println(errorMsg);
+              valido = false; // non servirebbe, ma mi aiuta
+              risultato[0] = "false";
+              risultato[1] = null;
+              return risultato;
+            }
+        }
+      } else {
+          if (contatore < nTentativi) {
+            System.out.println(retryMsg);
+            contatore++;
+          } else {
+            System.out.println(errorMsg);
+            valido = false; // non servirebbe, ma mi aiuta
+            risultato[0] = "false";
+            risultato[1] = null;
+            return risultato;  
+          }
+      }
+    }
+    scanner.close();
+    return risultato;
+  }
+
+
+  
+  // metodo per validare un indirizzo email
+  public String[] dammiEmail(String msg, String retryMsg, String errorMsg, int nTentativi) {
+    String[] risultato = new String[2];
+    boolean valido = false; // non servirebbe, ma mi aiuta
+    int contatore = 1;
+    String input;
+    System.out.println(msg);
+
+    while (contatore <= nTentativi) {
+      input = scanner.nextLine().trim();
+      if (input.matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")) {
+        valido = true;
+        System.out.println("Inserimento valido");
+        risultato[0] = "true";
+        risultato[1] = input;
+        return risultato;
+      } else {
+        if (contatore < nTentativi) {
+          System.out.println(retryMsg);
+          contatore ++;
+        } else {
+          System.out.println(errorMsg);
+          valido = false;
+          risultato[0] = "false";
+          risultato[1] = "null";
+          return risultato;
+        }
+      }
+    }
+    scanner.close();
+    return risultato;
+  }
+
+  
+  // metodo per il controllo formale del cf (solo italiano), senza entrare nel merito:
+  public String[] dammiCf(String msg, String retryMsg, String errorMsg, int nTentativi) {
+    String[] risultato = new String[2];
+    int contatore = 1;
+    boolean valido = false;
+    System.out.println(msg);
+
+    while (contatore <= nTentativi) {
+      String input = scanner.nextLine().toUpperCase().trim();
+      if (input.length() == 16 && input.matches("[A-Z]{6}\\d{2}[A-Z]\\d{2}[A-Z]\\d{3}[A-Z]")) {
+        valido = true;
+        System.out.println("Inserimento valido");
+        risultato[0] = "true";
+        risultato[1] = input;
+        return risultato;
+      } else {
+        if (contatore < nTentativi) {
+          System.out.println(retryMsg);
+          contatore++;
+        } else {
+          System.out.println(errorMsg);
+          valido = false;
+          risultato[0] = "false";
+          risultato[1] = null;
+          return risultato;
+        }
+      }
+    }
+    scanner.close();
+    return risultato;   
+  }
+
+  // metodo per validare intero, ma se inserisco spazio o invio non funziona
+  /*public int dammiIntero(String messaggio, int nTentativi) {
+    int contatore = 1;
+    System.out.println(messaggio);
+    while (contatore <= nTentativi) {
+      if (scanner.hasNextInt()) {
+        int intero = scanner.nextInt();
+        scanner.nextLine(); // per risolvere il problema della riga mangiata
+        System.out.println("Hai inserito: " + intero);
+        return intero;
+      } else { 
+          if (contatore < nTentativi) {
+          System.out.println("Errore! Inserimento non valido. " + messaggio);
+          scanner.nextLine(); // per risolvere il problema della riga mangiata
+          contatore++;
+          } else if (contatore == nTentativi) {
+              System.out.println("Errore! Inserimento non valido. Hai esaurito il numero di tentativi");
+              scanner.nextLine(); // per risolvere il problema della riga mangiata
+              contatore++;
+          }
+      }  
+    }
+    return -1;
+  } // chiusura metodo dammiIntero
+
+  // Metodo per validare una stringa:
+  public String dammiStringa(String messaggio, int nTentativi) {
+          int contatore = 0;
+          System.out.println(messaggio);
+          while (contatore < nTentativi) {
+              String input = scanner.nextLine();
+              if (!input.isEmpty()) {
+                  return input;
+              } else {
+                  System.out.println("Errore! Devi inserire una stringa.");
+                  contatore++;
+                  if (contatore >= nTentativi) {
+                      System.out.println("Hai esaurito il numero di tentativi");
+                      return null; // oppure un valore segnaposto che indichi il fallimento
+                  }
+              }
+          }
+          return null; // oppure un valore segnaposto che indichi il fallimento
+      } */
+
+      
+        
+      
+  
+    
+  
+  
+}  // chiusura classe

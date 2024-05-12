@@ -1,16 +1,18 @@
 import java.util.Scanner;
 import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.text.DateFormat;
 import java.text.ParseException;
 
 
-public class GestioneConsole {
+public class GestisciConsole {
   
   // Dichiaro lo scanner:
   private Scanner scanner = new Scanner(System.in);
 
   // costruttore
-  public GestioneConsole() {
+  public GestisciConsole() {
   }
   
   // metodo per validare intero senza range min-max
@@ -29,7 +31,7 @@ public class GestioneConsole {
         valido = true;
         risultato[0] = 1;
         risultato[1] = numero;
-        System.out.println("Inserimento valido");
+        System.out.println("Ok! Hai inserito: " + numero);
         //scanner.nextLine(); // per risolvere il problema della riga mangiata
         return risultato;
               
@@ -50,12 +52,12 @@ public class GestioneConsole {
     scanner.close();
     return risultato;
   }
+  
   // metodo per validare intero con range min-max
   public int[] dammiIntero(String msg, String retryMsg, String errorMsg, int nTentativi, int min, int max) {
       int[] risultato = new int[2];
       int contatore = 1;
       String input;
-      boolean valido = false; // non servirebbe, ma aiuta me quindi lo metto
       System.out.println(msg);
 
       while (contatore <= nTentativi) {
@@ -64,8 +66,7 @@ public class GestioneConsole {
           if (input != null && input.matches("[0-9]+")) {
               int numero = Integer.parseInt(input);
               if (numero >= min && numero <= max) {                  
-                valido = true;
-                System.out.println("Inserimento valido");
+                System.out.println("Ok, hai inserito" + numero);
                 risultato[0] = 1;
                 risultato[1] = numero;
               return risultato;
@@ -75,7 +76,6 @@ public class GestioneConsole {
                     contatore++;
                   } else {
                     System.out.println(errorMsg);
-                    valido = false;
                     risultato[0] = 0;
                     risultato[1] = 0;
                     return risultato;
@@ -87,7 +87,6 @@ public class GestioneConsole {
                   contatore++;
               } else {
                   System.out.println(errorMsg);
-                  valido = false;
                   risultato[0] = 0;
                   risultato[1] = 0;
                   return risultato;
@@ -102,7 +101,6 @@ public class GestioneConsole {
   //metodo per validare una stringa:
   public String[] dammiStringa(String msg, String retryMsg, String errorMsg, int nTentativi) {
     String[] risultato = new String[2];
-    boolean valido = false; // non servirebbe, ma mi aiuta
     int contatore = 1;
     String input;
     System.out.println(msg);
@@ -110,8 +108,7 @@ public class GestioneConsole {
     while (contatore <= nTentativi) {
       input = scanner.nextLine().trim();
       if (!input.isEmpty()) {
-        valido = true;
-        System.out.println("Inserimento valido. Hai inserito: " + input);
+        System.out.println("Ok. Hai inserito: " + input);
         risultato[0] = "true";
         risultato[1] = input;
         return risultato;
@@ -121,7 +118,6 @@ public class GestioneConsole {
           contatore ++;
         } else {
           System.out.println(errorMsg);
-          valido = false;
           risultato[0] = "false";
           risultato[1] = "null";
           return risultato;
@@ -132,13 +128,13 @@ public class GestioneConsole {
     return risultato;
   }
 
-  // metodo per validare data, senza un range di validità:
+  // metodo per validare data gg/mm/aaaa, senza un range di validità:
   public String[] dammiData(String msg, String retryMsg, String errorMsg, int nTentativi) {
     String[] risultato = new String[2];
-    boolean valido = false; // non servirebbe, ma mi aiuta
     int contatore = 1;
     String input;
     System.out.println(msg);
+    
 
     while (contatore <= nTentativi) {
       input = scanner.nextLine().trim();
@@ -149,8 +145,13 @@ public class GestioneConsole {
         int anno = Integer.parseInt(dataSplitted[2]);
 
         if ((mese >= 1 && mese <= 12) && (giorno > 0 && giorno <= giorniMese(mese, anno))) {
-          valido = true; // non servirebbe, ma mi aiuta
           System.out.println("Inserimento valido");
+//          SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+//          try {
+//        	  Date inputData = sdf.parse(input);
+//		} catch (ParseException e) {
+//			e.printStackTrace();
+//		}
           risultato[0] = "true";
           risultato[1] = input;
           return risultato;
@@ -160,7 +161,6 @@ public class GestioneConsole {
             contatore++;
           } else {
             System.out.println(errorMsg);
-            valido = false;
             risultato[0] = "false";
             risultato[1] = "null";
             return risultato;
@@ -173,7 +173,6 @@ public class GestioneConsole {
           contatore++;
         } else {
           System.out.println(errorMsg);
-          valido = false; // non servirebbe, ma mi aiuta
           risultato[0] = "false";
           risultato[1] = null;
           return risultato;     
@@ -215,7 +214,6 @@ public class GestioneConsole {
   // metodo per validare data, con un range di validità:
   public String[] dammiData(String msg, String retryMsg, String errorMsg, int nTentativi, String dataMin, String dataMax) {
     String[] risultato = new String[2];
-    boolean valido = false;
     int contatore = 1;
     System.out.println(msg);
 
@@ -237,7 +235,6 @@ public class GestioneConsole {
             Date dataMassima = dateFormat.parse(dataMax);
             
             if (data.after(dataMinima) && data.before(dataMassima)) {
-              valido = true;
               System.out.println("Inserimento valido");
               risultato[0] = "true";
               risultato[1] = input;
@@ -248,7 +245,6 @@ public class GestioneConsole {
               contatore++;
               } else {
                 System.out.println(errorMsg);
-                valido = false; // non servirebbe, ma mi aiuta
                 risultato[0] = "false";
                 risultato[1] = null;
                 return risultato;
@@ -264,8 +260,7 @@ public class GestioneConsole {
               contatore++;
             } else {
               System.out.println(errorMsg);
-              valido = false; // non servirebbe, ma mi aiuta
-              risultato[0] = "false";
+              risultato[0] = null;
               risultato[1] = null;
               return risultato;
             }
@@ -276,7 +271,6 @@ public class GestioneConsole {
             contatore++;
           } else {
             System.out.println(errorMsg);
-            valido = false; // non servirebbe, ma mi aiuta
             risultato[0] = "false";
             risultato[1] = null;
             return risultato;  
@@ -327,13 +321,11 @@ public class GestioneConsole {
   public String[] dammiCf(String msg, String retryMsg, String errorMsg, int nTentativi) {
     String[] risultato = new String[2];
     int contatore = 1;
-    boolean valido = false;
     System.out.println(msg);
 
     while (contatore <= nTentativi) {
       String input = scanner.nextLine().toUpperCase().trim();
       if (input.length() == 16 && input.matches("[A-Z]{6}\\d{2}[A-Z]\\d{2}[A-Z]\\d{3}[A-Z]")) {
-        valido = true;
         System.out.println("Inserimento valido");
         risultato[0] = "true";
         risultato[1] = input;
@@ -344,7 +336,6 @@ public class GestioneConsole {
           contatore++;
         } else {
           System.out.println(errorMsg);
-          valido = false;
           risultato[0] = "false";
           risultato[1] = null;
           return risultato;
@@ -354,57 +345,4 @@ public class GestioneConsole {
     scanner.close();
     return risultato;   
   }
-
-  // metodo per validare intero, ma se inserisco spazio o invio non funziona
-  /*public int dammiIntero(String messaggio, int nTentativi) {
-    int contatore = 1;
-    System.out.println(messaggio);
-    while (contatore <= nTentativi) {
-      if (scanner.hasNextInt()) {
-        int intero = scanner.nextInt();
-        scanner.nextLine(); // per risolvere il problema della riga mangiata
-        System.out.println("Hai inserito: " + intero);
-        return intero;
-      } else { 
-          if (contatore < nTentativi) {
-          System.out.println("Errore! Inserimento non valido. " + messaggio);
-          scanner.nextLine(); // per risolvere il problema della riga mangiata
-          contatore++;
-          } else if (contatore == nTentativi) {
-              System.out.println("Errore! Inserimento non valido. Hai esaurito il numero di tentativi");
-              scanner.nextLine(); // per risolvere il problema della riga mangiata
-              contatore++;
-          }
-      }  
-    }
-    return -1;
-  } // chiusura metodo dammiIntero
-
-  // Metodo per validare una stringa:
-  public String dammiStringa(String messaggio, int nTentativi) {
-          int contatore = 0;
-          System.out.println(messaggio);
-          while (contatore < nTentativi) {
-              String input = scanner.nextLine();
-              if (!input.isEmpty()) {
-                  return input;
-              } else {
-                  System.out.println("Errore! Devi inserire una stringa.");
-                  contatore++;
-                  if (contatore >= nTentativi) {
-                      System.out.println("Hai esaurito il numero di tentativi");
-                      return null; // oppure un valore segnaposto che indichi il fallimento
-                  }
-              }
-          }
-          return null; // oppure un valore segnaposto che indichi il fallimento
-      } */
-
-      
-        
-      
-  
-    
-  
-  
-}  // chiusura classe
+}
